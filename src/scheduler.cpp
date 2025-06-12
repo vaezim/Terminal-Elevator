@@ -9,7 +9,7 @@ Scheduler::Scheduler(int numFloors, int numElevators, float passengersPerMinute)
     m_numFloors(numFloors),
     m_numElevators(numElevators),
     m_passengersPerMinute(passengersPerMinute),
-    m_passengerProcess(numFloors, numElevators)
+    m_passengerProcess(numFloors, passengersPerMinute)
 {
     for (int i{ 0 }; i < m_numElevators; i++) {
         m_elevators.emplace_back(std::make_shared<Elevator>(numFloors));
@@ -71,7 +71,7 @@ void Scheduler::RunPassengerProcess()
 void Scheduler::Display()
 {
     initscr();
-    constexpr int START_X{ 0 }, START_Y{ 10 };
+    constexpr int START_X{ 5 }, START_Y{ 10 };
     const int width = m_numElevators*4 + 4;
     WINDOW *window = newwin(m_numFloors + 4, width, START_X, START_Y);
 
@@ -95,7 +95,7 @@ void Scheduler::Display()
         // Waiting passengers
         m_passengerListMutex.lock();
         int passengerListSize = m_passengerList.size();
-        int x{ 1 }, y{ START_Y + width + 2 };
+        int x{ START_X + 1 }, y{ START_Y + width + 2 };
         mvprintw(x++, y, "%d passengers are waiting", passengerListSize);
         for (const auto &p : m_passengerList) {
             mvprintw(x++, y, "(%d --> %d)", p.srcFloor, p.dstFloor);
